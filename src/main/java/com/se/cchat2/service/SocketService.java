@@ -1,7 +1,6 @@
 package com.se.cchat2.service;
 
 import com.corundumstudio.socketio.SocketIOClient;
-import com.se.cchat2.entity.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +8,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SocketService {
 
-    public void sendMessage(String room,String eventName, SocketIOClient senderClient, Message message) {
-        for (
-                SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
+    public void sendMessage(String room, String eventName, SocketIOClient senderClient, String message) {
+        for (SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
             if (!client.getSessionId().equals(senderClient.getSessionId())) {
                 client.sendEvent(eventName, message);
             }
