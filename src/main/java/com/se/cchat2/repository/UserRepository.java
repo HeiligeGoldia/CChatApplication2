@@ -29,13 +29,13 @@ public class UserRepository {
         DocumentReference ref = db.collection("Users").document(uid);
         ApiFuture<DocumentSnapshot> api = ref.get();
         DocumentSnapshot doc = api.get();
-        ref.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirestoreException e) {
-                users.add(documentSnapshot.toObject(User.class));
-                System.out.println(users.get(users.size()-1).toString());
-            }
-        });
+//        ref.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirestoreException e) {
+//                users.add(documentSnapshot.toObject(User.class));
+//                System.out.println(users.get(users.size()-1).toString());
+//            }
+//        });
         if(doc.exists()){
             user = doc.toObject(User.class);
             return user;
