@@ -13,7 +13,7 @@ public class MessageController {
     @Autowired
     private MessageRepository messageRepository;
 
-    @MessageMapping
+    @MessageMapping("/chat/{cid}")
     public String send(@DestinationVariable String cid, Message newMess){
         return messageRepository.send(cid, newMess);
     }
