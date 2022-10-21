@@ -11,7 +11,9 @@ public class Message {
 
     private String msid;
 
-    private String mid;
+    private String cid;
+
+    private String uid;
 
     private String content;
 
@@ -23,12 +25,20 @@ public class Message {
         this.msid = msid;
     }
 
-    public String getMid() {
-        return mid;
+    public String getCid() {
+        return cid;
     }
 
-    public void setMid(String mid) {
-        this.mid = mid;
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getContent() {
