@@ -1,4 +1,4 @@
-package com.se.cchat2.config;
+package com.se.cchat2.component;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import lombok.RequiredArgsConstructor;
