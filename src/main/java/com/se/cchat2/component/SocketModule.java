@@ -4,15 +4,20 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.se.cchat2.controller.UserController;
 import com.se.cchat2.entity.Message;
+import com.se.cchat2.entity.User;
 import com.se.cchat2.service.SocketService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class SocketModule {
 
+    @Autowired
+    private UserController con;
     private final SocketIOServer server;
     private final SocketService socketService;
 
@@ -27,7 +32,13 @@ public class SocketModule {
     private DataListener<Message> onChatReceived() {
         return (senderClient, data, ackSender) -> {
             log.info(data.toString());
-            socketService.sendMessage(data.getCid(), "get_message", senderClient, data.getContent());
+            User u = new User();
+            u.setPhoneNumber("0839002827");
+            u.setFirstName("D");
+            u.setLastName("V");
+            u.setPassword("pkmr2016");
+            con.createAccount(u);
+            socketService.sendMessage(data.getCid(), "get_message", senderClient, u.getUid());
         };
     }
 
