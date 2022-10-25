@@ -22,6 +22,22 @@ public class UserController {
         return uuid;
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
+        User u = userRepository.findBySdt(newAcc.getPhoneNumber());
+        if(u.getUid() == null){
+            return "Sai thong tin dang nhap";
+        }
+        else {
+            if(u.getPassword().equals(newAcc.getPassword())){
+                return u.getUid();
+            }
+            else {
+                return "Sai thong tin dang nhap";
+            }
+        }
+    }
+
     @GetMapping("/getUser/{uid}")
     public User getUserById(@PathVariable("uid") String uid) throws ExecutionException, InterruptedException {
         User u = userRepository.findByUid(uid);
