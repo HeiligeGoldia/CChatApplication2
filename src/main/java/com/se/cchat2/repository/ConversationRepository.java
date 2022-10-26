@@ -30,7 +30,7 @@ public class ConversationRepository {
         return new Conversation();
     }
 
-    public List<Conversation> getUserConv(List<Member> userMem) throws ExecutionException, InterruptedException {
+    public List<Conversation> loadUserConv(List<Member> userMem) throws ExecutionException, InterruptedException {
         List<Conversation> list = new ArrayList<>();
         for(Member m : userMem){
             DocumentReference ref = db.collection("Conversations").document(m.getCid());

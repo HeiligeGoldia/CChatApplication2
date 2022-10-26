@@ -17,27 +17,27 @@ import java.util.concurrent.ExecutionException;
 public class UserRepository {
     Firestore db = FirestoreClient.getFirestore();
 
-    FirebaseAuth auth = FirebaseAuth.getInstance();
+//    FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public String create(User newUser) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> api = db.collection("Users").document(newUser.getUid()).set(newUser);
         return api.get().getUpdateTime().toString();
     }
 
-    public String login(User newUser) throws FirebaseAuthException {
-        UserRecord ur = auth.getUserByPhoneNumber(newUser.getPhoneNumber());
-//        ur
-        return "";
-    }
-
-    public String register(User newUser) throws FirebaseAuthException {
-        UserRecord.CreateRequest u = new UserRecord.CreateRequest();
-        u.setPhoneNumber(newUser.getPhoneNumber());
-        u.setPassword(newUser.getPassword());
-        auth.createUser(u);
-//        auth.
-        return "";
-    }
+//    public String login(User newUser) throws FirebaseAuthException {
+//        UserRecord ur = auth.getUserByPhoneNumber(newUser.getPhoneNumber());
+////        ur
+//        return "";
+//    }
+//
+//    public String register(User newUser) throws FirebaseAuthException {
+//        UserRecord.CreateRequest u = new UserRecord.CreateRequest();
+//        u.setPhoneNumber(newUser.getPhoneNumber());
+//        u.setPassword(newUser.getPassword());
+//        auth.createUser(u);
+////        auth.
+//        return "";
+//    }
 
     public User findByUid(String uid) throws ExecutionException, InterruptedException {
 //        ArrayList<User> users = new ArrayList<>();
@@ -83,8 +83,7 @@ public class UserRepository {
         Query query = ref.whereEqualTo("phoneNumber", sdt);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         for (DocumentSnapshot d : querySnapshot.get().getDocuments()) {
-            User u = d.toObject(User.class);
-            return u;
+            return d.toObject(User.class);
         }
         return new User();
     }
