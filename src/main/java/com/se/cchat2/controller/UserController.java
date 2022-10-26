@@ -40,8 +40,7 @@ public class UserController {
 
     @GetMapping("/getUser/{uid}")
     public User getUserById(@PathVariable("uid") String uid) throws ExecutionException, InterruptedException {
-        User u = userRepository.findByUid(uid);
-        return u;
+        return userRepository.findByUid(uid);
     }
 
 }
