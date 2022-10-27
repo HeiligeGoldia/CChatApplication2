@@ -19,6 +19,9 @@ public class MessageController {
 
     @PostMapping("/send")
     public String send(@RequestBody Message newMessage) throws ExecutionException, InterruptedException {
+        String lastId = messageRepository.getLastMessId();
+        int newId = Integer.parseInt(lastId) + 1;
+        newMessage.setMsid(String.valueOf(newId));
         messageRepository.sendMessage(newMessage);
         return newMessage.getContent();
     }
@@ -26,6 +29,11 @@ public class MessageController {
     @GetMapping("/receive/{cid}")
     public List<Message> receive(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
         return messageRepository.getMessages(cid);
+    }
+
+    @GetMapping("/getLastMessId")
+    public String getLastId() throws ExecutionException, InterruptedException {
+        return messageRepository.getLastMessId();
     }
 
 }
