@@ -2,15 +2,10 @@ package com.se.cchat2.repository;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
 import com.se.cchat2.entity.User;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -86,6 +81,11 @@ public class UserRepository {
             return d.toObject(User.class);
         }
         return new User();
+    }
+
+    public String delete(String uid) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = db.collection("Users").document(uid).delete();
+        return writeResult.get().getUpdateTime().toString();
     }
 
 }

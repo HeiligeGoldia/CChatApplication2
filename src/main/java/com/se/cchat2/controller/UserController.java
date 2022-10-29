@@ -43,4 +43,16 @@ public class UserController {
         return userRepository.findByUid(uid);
     }
 
+    @PutMapping("/updateUser/{uid}")
+    public User createAccount(@PathVariable("uid") String uid, @RequestBody User newAcc) throws ExecutionException, InterruptedException {
+        newAcc.setUid(uid);
+        userRepository.create(newAcc);
+        return newAcc;
+    }
+
+    @DeleteMapping("/deleteUser/{uid}")
+    public String delete(@PathVariable("uid") String uid) throws ExecutionException, InterruptedException {
+        return userRepository.delete(uid);
+    }
+
 }
