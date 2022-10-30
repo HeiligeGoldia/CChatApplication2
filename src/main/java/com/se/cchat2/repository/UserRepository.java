@@ -54,25 +54,6 @@ public class UserRepository {
         return new User();
     }
 
-//    public User findBySdt(String sdt) throws ExecutionException, InterruptedException {
-//        CollectionReference ref = db.collection("Users");
-//        ApiFuture<QuerySnapshot> api = ref.get();
-//        QuerySnapshot doc = api.get();
-//        List<QueryDocumentSnapshot> docs = doc.getDocuments();
-//        if(docs.isEmpty()){
-//            return new User();
-//        }
-//        else {
-//            for(DocumentSnapshot d : docs){
-//                User u = d.toObject(User.class);
-//                if(u.getPhoneNumber().equals(sdt)){
-//                    return u;
-//                }
-//            }
-//            return new User();
-//        }
-//    }
-
     public User findBySdt(String sdt) throws ExecutionException, InterruptedException {
         CollectionReference ref = db.collection("Users");
         Query query = ref.whereEqualTo("phoneNumber", sdt);

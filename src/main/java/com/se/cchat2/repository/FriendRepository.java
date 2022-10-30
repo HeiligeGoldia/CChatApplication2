@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.se.cchat2.entity.Friend;
+import com.se.cchat2.entity.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -73,6 +74,25 @@ public class FriendRepository {
         }
     }
 
+    public Friend findPendingBy2Uid(String uid1, String uid2) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Friend");
+        Query query1 = ref.whereEqualTo("uid1", uid1).whereEqualTo("uid2", uid2).whereEqualTo("status", "Pending");
+        ApiFuture<QuerySnapshot> querySnapshot1 = query1.get();
+        if(querySnapshot1.get().getDocuments().isEmpty()){
+            Query query2 = ref.whereEqualTo("uid1", uid2).whereEqualTo("uid2", uid1).whereEqualTo("status", "Pending");
+            ApiFuture<QuerySnapshot> querySnapshot2 = query2.get();
+            if(querySnapshot2.get().getDocuments().isEmpty()){
+                return new Friend();
+            }
+            else{
+                return querySnapshot2.get().getDocuments().get(0).toObject(Friend.class);
+            }
+        }
+        else{
+            return querySnapshot1.get().getDocuments().get(0).toObject(Friend.class);
+        }
+    }
+
     public List<String> findUserFriends(String uid) throws ExecutionException, InterruptedException {
         List<String> uids = new ArrayList<>();
         CollectionReference ref = db.collection("Friend");
@@ -111,6 +131,23 @@ public class FriendRepository {
         return uids;
     }
 
-//    public List<Friend>
+    public boolean checkF(String uid1, String uid2) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Friend");
+        Query query1 = ref.whereEqualTo("uid1", uid1).whereEqualTo("uid2", uid2);
+        ApiFuture<QuerySnapshot> querySnapshot1 = query1.get();
+        if(querySnapshot1.get().getDocuments().isEmpty()){
+            Query query2 = ref.whereEqualTo("uid1", uid2).whereEqualTo("uid2", uid1);
+            ApiFuture<QuerySnapshot> querySnapshot2 = query2.get();
+            if(querySnapshot2.get().getDocuments().isEmpty()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
 
 }

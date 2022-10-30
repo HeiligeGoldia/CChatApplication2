@@ -29,27 +29,32 @@ public class FriendController {
         return friendRepository.create(newFriend);
     }
 
-    @PutMapping("/acceptRequest/{fid}")
-    public String accept(@PathVariable String fid) throws ExecutionException, InterruptedException {
-        Friend newFriend = friendRepository.getById(fid);
+    @PutMapping("/acceptRequest/{uid}/{fuid}")
+    public String accept(@PathVariable String uid, @PathVariable String fuid) throws ExecutionException, InterruptedException {
+        Friend newFriend = friendRepository.findPendingBy2Uid(fuid, uid);
         if(newFriend.getFid() == null){
             return "Friend not found";
         }
         else {
-            newFriend.setFid(fid);
             newFriend.setStatus("Friend");
             return friendRepository.create(newFriend);
         }
     }
 
-    @DeleteMapping("/deleteRequest/{fid}")
-    public String deleteRequest(@PathVariable String fid) throws ExecutionException, InterruptedException {
-        return friendRepository.delete(fid);
+    @DeleteMapping("/deleteRequest/{uid}/{fuid}")
+    public String deleteRequest(@PathVariable String uid, @PathVariable String fuid) throws ExecutionException, InterruptedException {
+        Friend newFriend = friendRepository.findPendingBy2Uid(fuid, uid);
+        if(newFriend.getFid() == null){
+            return "Delete failed";
+        }
+        else {
+            return friendRepository.delete(newFriend.getFid());
+        }
     }
 
-    @DeleteMapping("/removeFriend")
-    public String removeFriend(@RequestBody Friend uids) throws ExecutionException, InterruptedException {
-        Friend f = friendRepository.findBy2Uid(uids.getUid1(), uids.getUid2());
+    @DeleteMapping("/removeFriend/{uid1}/{uid2}")
+    public String removeFriend(@PathVariable String uid1, @PathVariable String uid2) throws ExecutionException, InterruptedException {
+        Friend f = friendRepository.findBy2Uid(uid1, uid2);
         if(f.getFid() == null){
             return "Delete failed";
         }
@@ -84,6 +89,17 @@ public class FriendController {
             users.add(userRepository.findByUid(s));
         }
         return users;
+    }
+
+    @GetMapping("/findFBySdt/{sdt}/{uid}")
+    public User findFBySdt(@PathVariable String sdt, @PathVariable String uid) throws ExecutionException, InterruptedException {
+        User u = userRepository.findBySdt(sdt);
+        if(friendRepository.checkF(u.getUid(), uid) && !u.getUid().equals(uid)){
+            return u;
+        }
+        else {
+            return new User();
+        }
     }
 
 }

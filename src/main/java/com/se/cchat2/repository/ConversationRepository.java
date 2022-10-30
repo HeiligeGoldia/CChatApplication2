@@ -62,8 +62,31 @@ public class ConversationRepository {
         int newCid = Integer.parseInt(getLastConvId()) + 1;
         String cid = String.valueOf(newCid);
         newConversation.setCid(cid);
+        newConversation.setType("group");
         ApiFuture<WriteResult> api = db.collection("Conversations").document(cid).set(newConversation);
         return api.get().getUpdateTime().toString();
+    }
+
+    public String createDefault() throws ExecutionException, InterruptedException {
+        Conversation newConversation = new Conversation();
+        int newCid = Integer.parseInt(getLastConvId()) + 1;
+        String cid = String.valueOf(newCid);
+        newConversation.setCid(cid);
+        newConversation.setName(cid);
+        newConversation.setType("direct");
+        ApiFuture<WriteResult> api = db.collection("Conversations").document(cid).set(newConversation);
+        return api.get().getUpdateTime().toString();
+    }
+
+    public List<Conversation> getAllDirects() throws ExecutionException, InterruptedException {
+        List<Conversation> cons = new ArrayList<>();
+        CollectionReference ref = db.collection("Conversations");
+        Query query = ref.whereEqualTo("type", "direct");
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        for (DocumentSnapshot d : querySnapshot.get().getDocuments()) {
+            cons.add(d.toObject(Conversation.class));
+        }
+        return cons;
     }
 
 }

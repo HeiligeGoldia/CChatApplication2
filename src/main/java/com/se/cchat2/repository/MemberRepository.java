@@ -76,4 +76,14 @@ public class MemberRepository {
         return api.get().getUpdateTime().toString();
     }
 
+    public Member getByCidUid(String cid, String uid) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Members");
+        Query query = ref.whereEqualTo("cid", cid).whereEqualTo("uid", uid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        for (DocumentSnapshot d : querySnapshot.get().getDocuments()) {
+            return d.toObject(Member.class);
+        }
+        return new Member();
+    }
+
 }
