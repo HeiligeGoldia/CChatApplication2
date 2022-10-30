@@ -1,10 +1,13 @@
 package com.se.cchat2.controller;
 
 import com.se.cchat2.entity.Friend;
+import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.FriendRepository;
+import com.se.cchat2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -13,6 +16,9 @@ public class FriendController {
 
     @Autowired
     private FriendRepository friendRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/addFriend")
     public String add(@RequestBody Friend newFriend) throws ExecutionException, InterruptedException {
@@ -51,8 +57,13 @@ public class FriendController {
     }
 
     @GetMapping("/findUserFriends/{uid}")
-    public List<String> findUserFriends(@PathVariable String uid) throws ExecutionException, InterruptedException {
-        return friendRepository.findUserFriends(uid);
+    public List<User> findUserFriends(@PathVariable String uid) throws ExecutionException, InterruptedException {
+        List<String> uids = friendRepository.findUserFriends(uid);
+        List<User> users = new ArrayList<>();
+        for(String s : uids){
+            users.add(userRepository.findByUid(s));
+        }
+        return users;
     }
 
 }
