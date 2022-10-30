@@ -64,7 +64,8 @@ public class ConversationRepository {
         newConversation.setCid(cid);
         newConversation.setType("group");
         ApiFuture<WriteResult> api = db.collection("Conversations").document(cid).set(newConversation);
-        return api.get().getUpdateTime().toString();
+        api.get();
+        return newConversation.getCid();
     }
 
     public String createDefault() throws ExecutionException, InterruptedException {
