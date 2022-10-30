@@ -80,7 +80,7 @@ public class ConversationController {
         }
     }
 
-        @GetMapping("/loadFriendsToAddConv/{uid}/{cid}")
+    @GetMapping("/loadFriendsToAddConv/{uid}/{cid}")
     public List<User> loadFriendsToAddConv(@PathVariable String uid, @PathVariable String cid) throws ExecutionException, InterruptedException {
         List<String> fl = friendRepository.findUserFriends(uid);
         List<User> lu = new ArrayList<>();
