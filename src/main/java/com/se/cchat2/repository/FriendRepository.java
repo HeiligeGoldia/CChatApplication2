@@ -89,6 +89,28 @@ public class FriendRepository {
         return uids;
     }
 
+    public List<String> findPendingRequests(String uid) throws ExecutionException, InterruptedException {
+        List<String> uids = new ArrayList<>();
+        CollectionReference ref = db.collection("Friend");
+        Query query1 = ref.whereEqualTo("uid2", uid).whereEqualTo("status", "Pending");
+        ApiFuture<QuerySnapshot> querySnapshot1 = query1.get();
+        for (DocumentSnapshot d1 : querySnapshot1.get().getDocuments()) {
+            uids.add(d1.toObject(Friend.class).getUid1());
+        }
+        return uids;
+    }
+
+    public List<String> findSentRequests(String uid) throws ExecutionException, InterruptedException {
+        List<String> uids = new ArrayList<>();
+        CollectionReference ref = db.collection("Friend");
+        Query query1 = ref.whereEqualTo("uid1", uid).whereEqualTo("status", "Pending");
+        ApiFuture<QuerySnapshot> querySnapshot1 = query1.get();
+        for (DocumentSnapshot d1 : querySnapshot1.get().getDocuments()) {
+            uids.add(d1.toObject(Friend.class).getUid2());
+        }
+        return uids;
+    }
+
 //    public List<Friend>
 
 }

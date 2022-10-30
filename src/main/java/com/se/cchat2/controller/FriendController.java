@@ -66,4 +66,24 @@ public class FriendController {
         return users;
     }
 
+    @GetMapping("/findPendingRequests/{uid}")
+    public List<User> findPendingRequests(@PathVariable String uid) throws ExecutionException, InterruptedException {
+        List<String> uids = friendRepository.findPendingRequests(uid);
+        List<User> users = new ArrayList<>();
+        for(String s : uids){
+            users.add(userRepository.findByUid(s));
+        }
+        return users;
+    }
+
+    @GetMapping("/findSentRequests/{uid}")
+    public List<User> findSentRequests(@PathVariable String uid) throws ExecutionException, InterruptedException {
+        List<String> uids = friendRepository.findSentRequests(uid);
+        List<User> users = new ArrayList<>();
+        for(String s : uids){
+            users.add(userRepository.findByUid(s));
+        }
+        return users;
+    }
+
 }
