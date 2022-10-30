@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.IntStream;
 
 @Repository
 public class MessageRepository {
@@ -25,12 +24,17 @@ public class MessageRepository {
         ApiFuture<QuerySnapshot> api = ref.get();
         QuerySnapshot doc = api.get();
         List<QueryDocumentSnapshot> docs = doc.getDocuments();
-        List<Integer> docId = new ArrayList<>();
-        for(QueryDocumentSnapshot ds : docs){
-            docId.add(Integer.parseInt(ds.getId()));
+        if(docs.size() == 0){
+            return "0";
         }
-        Collections.sort(docId);
-        return String.valueOf(docId.get(docId.size()-1));
+        else{
+            List<Integer> docId = new ArrayList<>();
+            for(QueryDocumentSnapshot ds : docs){
+                docId.add(Integer.parseInt(ds.getId()));
+            }
+            Collections.sort(docId);
+            return String.valueOf(docId.get(docId.size()-1));
+        }
     }
 
 //    public List<Message> getMessages(String cid) throws ExecutionException, InterruptedException {

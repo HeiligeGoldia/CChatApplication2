@@ -7,6 +7,7 @@ import com.se.cchat2.entity.Member;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -47,6 +48,32 @@ public class MemberRepository {
             list.add(d.toObject(Member.class));
         }
         return list;
+    }
+
+    public String getLastMemId() throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Members");
+        ApiFuture<QuerySnapshot> api = ref.get();
+        QuerySnapshot doc = api.get();
+        List<QueryDocumentSnapshot> docs = doc.getDocuments();
+        if(docs.size() == 0){
+            return "0";
+        }
+        else{
+            List<Integer> docId = new ArrayList<>();
+            for(QueryDocumentSnapshot ds : docs){
+                docId.add(Integer.parseInt(ds.getId()));
+            }
+            Collections.sort(docId);
+            return String.valueOf(docId.get(docId.size()-1));
+        }
+    }
+
+    public String create(String cid, String uid, String role) throws ExecutionException, InterruptedException {
+        int newMid = Integer.parseInt(getLastMemId()) + 1;
+        String mid = String.valueOf(newMid);
+        Member newMem = new Member(mid, cid, role, uid);
+        ApiFuture<WriteResult> api = db.collection("Members").document(mid).set(newMem);
+        return api.get().getUpdateTime().toString();
     }
 
 }

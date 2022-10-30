@@ -1,15 +1,14 @@
 package com.se.cchat2.repository;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.se.cchat2.entity.Conversation;
 import com.se.cchat2.entity.Member;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -39,6 +38,32 @@ public class ConversationRepository {
             list.add(doc.toObject(Conversation.class));
         }
         return list;
+    }
+
+    public String getLastConvId() throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Conversations");
+        ApiFuture<QuerySnapshot> api = ref.get();
+        QuerySnapshot doc = api.get();
+        List<QueryDocumentSnapshot> docs = doc.getDocuments();
+        if(docs.size() == 0){
+            return "0";
+        }
+        else{
+            List<Integer> docId = new ArrayList<>();
+            for(QueryDocumentSnapshot ds : docs){
+                docId.add(Integer.parseInt(ds.getId()));
+            }
+            Collections.sort(docId);
+            return String.valueOf(docId.get(docId.size()-1));
+        }
+    }
+
+    public String create(Conversation newConversation) throws ExecutionException, InterruptedException {
+        int newCid = Integer.parseInt(getLastConvId()) + 1;
+        String cid = String.valueOf(newCid);
+        newConversation.setCid(cid);
+        ApiFuture<WriteResult> api = db.collection("Conversations").document(cid).set(newConversation);
+        return api.get().getUpdateTime().toString();
     }
 
 }
