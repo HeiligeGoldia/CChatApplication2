@@ -4,6 +4,7 @@ import com.se.cchat2.entity.Member;
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +23,10 @@ public class MemberController {
         return memberRepository.create(newMem.getCid(), newMem.getUid(), newMem.getRole());
     }
 
-    @PostMapping("/newMems")
-    public String create(@RequestBody List<User> newMems, String cid) throws ExecutionException, InterruptedException {
-        for(User u : newMems){
-            memberRepository.create(cid, u.getUid(), "Member");
+    @PostMapping("/newMems/{cid}")
+    public String create(@PathVariable String cid, @RequestBody List<String> newMems) throws ExecutionException, InterruptedException {
+        for(String u : newMems){
+            memberRepository.create(cid, u, "Member");
         }
         return "Done";
     }
