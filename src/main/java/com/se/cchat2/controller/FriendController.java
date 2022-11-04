@@ -94,11 +94,20 @@ public class FriendController {
     @GetMapping("/findFBySdt/{sdt}/{uid}")
     public User findFBySdt(@PathVariable String sdt, @PathVariable String uid) throws ExecutionException, InterruptedException {
         User u = userRepository.findBySdt(sdt);
-        if(friendRepository.checkF(u.getUid(), uid) && !u.getUid().equals(uid)){
-            return u;
+        if(u.getUid() != null){
+            if(friendRepository.checkF(u.getUid(), uid) && !u.getUid().equals(uid)){
+                return u;
+            }
+            else {
+                User un = new User();
+                un.setUid("f");
+                return un;
+            }
         }
         else {
-            return new User();
+            User nu = new User();
+            nu.setUid("nf");
+            return nu;
         }
     }
 
