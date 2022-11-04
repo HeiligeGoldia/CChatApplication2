@@ -50,9 +50,11 @@ public class ConversationController {
         return listUser;
     }
 
-    @PostMapping("/newConv")
-    public String create(@RequestBody Conversation newConversation) throws ExecutionException, InterruptedException {
-        return conversationRepository.create(newConversation);
+    @PostMapping("/newConv/{uid}")
+    public String create(@PathVariable String uid, @RequestBody Conversation newConversation) throws ExecutionException, InterruptedException {
+        String cv = conversationRepository.create(newConversation);
+        memberRepository.create(cv,uid,"Owner");
+        return cv;
     }
 
     @PostMapping("/newDefConv")

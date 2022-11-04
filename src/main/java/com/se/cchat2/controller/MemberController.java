@@ -18,10 +18,10 @@ public class MemberController {
     @Autowired
     private MemberRepository memberRepository;
 
-    @PostMapping("/newMem")
-    public String create(@RequestBody Member newMem) throws ExecutionException, InterruptedException {
-        return memberRepository.create(newMem.getCid(), newMem.getUid(), newMem.getRole());
-    }
+//    @PostMapping("/newMem")
+//    public String create(@RequestBody Member newMem) throws ExecutionException, InterruptedException {
+//        return memberRepository.create(newMem.getCid(), newMem.getUid(), newMem.getRole());
+//    }
 
     @PostMapping("/newMems/{cid}")
     public String create(@PathVariable String cid, @RequestBody List<String> newMems) throws ExecutionException, InterruptedException {
