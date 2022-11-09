@@ -76,7 +76,8 @@ public class ConversationRepository {
         newConversation.setName(cid);
         newConversation.setType("direct");
         ApiFuture<WriteResult> api = db.collection("Conversations").document(cid).set(newConversation);
-        return api.get().getUpdateTime().toString();
+        api.get();
+        return cid;
     }
 
     public List<Conversation> getAllDirects() throws ExecutionException, InterruptedException {

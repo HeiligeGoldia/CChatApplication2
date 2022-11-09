@@ -20,6 +20,7 @@ public class ConversationController {
 
     @Autowired
     private ConversationRepository conversationRepository;
+
     @Autowired
     private MemberRepository memberRepository;
 
