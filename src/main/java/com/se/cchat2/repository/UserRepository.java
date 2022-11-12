@@ -4,35 +4,50 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.se.cchat2.entity.User;
+import com.twilio.Twilio;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.stereotype.Repository;
 
+import java.lang.reflect.Array;
 import java.util.concurrent.ExecutionException;
 
 @Repository
 public class UserRepository {
-    Firestore db = FirestoreClient.getFirestore();
 
-//    FirebaseAuth auth = FirebaseAuth.getInstance();
+    Firestore db = FirestoreClient.getFirestore();
 
     public String create(User newUser) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> api = db.collection("Users").document(newUser.getUid()).set(newUser);
         return api.get().getUpdateTime().toString();
     }
 
-//    public String login(User newUser) throws FirebaseAuthException {
-//        UserRecord ur = auth.getUserByPhoneNumber(newUser.getPhoneNumber());
-////        ur
-//        return "";
-//    }
-//
-//    public String register(User newUser) throws FirebaseAuthException {
-//        UserRecord.CreateRequest u = new UserRecord.CreateRequest();
-//        u.setPhoneNumber(newUser.getPhoneNumber());
-//        u.setPassword(newUser.getPassword());
-//        auth.createUser(u);
-////        auth.
-//        return "";
-//    }
+    public String register1(User newUser) throws ExecutionException, InterruptedException {
+        String sdt = newUser.getPhoneNumber();
+        String sdtp = "+84" + sdt.substring(1, sdt.length());
+        if(findBySdt(sdt).getUid()!=null){
+            return "Phone number already in use";
+        }
+        else{
+            Twilio.init("AC96e6a911a4dbdeb1ba8e7d5aaabedd76", "a46fcbb8d7640d91183e38d5e8e0a73d");
+            Verification verification = Verification.creator("VA86635201a4bbafb69394a1cf3c2e7b6b", sdtp, "sms").create();
+            return "OTP sent";
+        }
+    }
+
+    public String register2(User newUser, String otp) throws ExecutionException, InterruptedException {
+        String sdt = newUser.getPhoneNumber();
+        String sdtp = "+84" + sdt.substring(1, sdt.length());
+        VerificationCheck verificationCheck = VerificationCheck.creator("VA86635201a4bbafb69394a1cf3c2e7b6b", otp)
+                .setTo(sdtp)
+                .create();
+        if(verificationCheck.getStatus().equals("approved")){
+            return create(newUser);
+        }
+        else {
+            return "OTP invalid";
+        }
+    }
 
     public User findByUid(String uid) throws ExecutionException, InterruptedException {
 //        ArrayList<User> users = new ArrayList<>();

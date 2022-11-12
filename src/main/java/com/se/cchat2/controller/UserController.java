@@ -14,12 +14,23 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+//    @PostMapping("/register")
+//    public String createAccount(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
+//        String uuid = UUID.randomUUID().toString();
+//        newAcc.setUid(uuid);
+//        userRepository.create(newAcc);
+//        return uuid;
+//    }
+
     @PostMapping("/register")
-    public String createAccount(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
+    public String createAccount1(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
+        return userRepository.register1(newAcc);
+    }
+    @PostMapping("/register/{otp}")
+    public String createAccount2(@PathVariable String otp ,@RequestBody User newAcc) throws ExecutionException, InterruptedException {
         String uuid = UUID.randomUUID().toString();
         newAcc.setUid(uuid);
-        userRepository.create(newAcc);
-        return uuid;
+        return userRepository.register2(newAcc, otp);
     }
 
     @PostMapping("/login")
