@@ -1,7 +1,6 @@
 package com.se.cchat2.controller;
 
 import com.se.cchat2.entity.Conversation;
-import com.se.cchat2.entity.Friend;
 import com.se.cchat2.entity.Member;
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.ConversationRepository;

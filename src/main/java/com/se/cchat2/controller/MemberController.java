@@ -4,10 +4,7 @@ import com.se.cchat2.entity.Member;
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -30,5 +27,10 @@ public class MemberController {
         }
         return "Done";
     }
+
+     @GetMapping("/getUserRole/{uid}/{cid}")
+    public String getUserRole(@PathVariable String uid, @PathVariable String cid) throws ExecutionException, InterruptedException {
+        return memberRepository.getByCidUid(cid,uid).getRole();
+     }
 
 }
