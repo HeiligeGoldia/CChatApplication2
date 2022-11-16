@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import com.se.cchat2.entity.Message;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -14,8 +15,16 @@ public class MessageRepository {
 
     Firestore db = FirestoreClient.getFirestore();
 
+    final String password = "cchat128";
+
     public String sendMessage(Message newMess) throws ExecutionException, InterruptedException {
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+        encryptor.setPassword(password);
+        String encrypted= encryptor.encrypt(newMess.getContent());
+        newMess.setContent(encrypted);
+
         ApiFuture<WriteResult> api = db.collection("Messages").document(newMess.getMsid()).set(newMess);
+
         return api.get().getUpdateTime().toString();
     }
 
@@ -55,12 +64,18 @@ public class MessageRepository {
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         List<QueryDocumentSnapshot> docs = querySnapshot.get().getDocuments();
         List<Integer> docId = new ArrayList<>();
+        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+        encryptor.setPassword(password);
+
         for(QueryDocumentSnapshot ds : docs){
             docId.add(Integer.parseInt(ds.getId()));
         }
         Collections.sort(docId);
         for(Integer i : docId){
-            list.add(ref.document(String.valueOf(i)).get().get().toObject(Message.class));
+            Message mes = ref.document(String.valueOf(i)).get().get().toObject(Message.class);
+            String decrypted = encryptor.decrypt(mes.getContent());
+            mes.setContent(decrypted);
+            list.add(mes);
         }
         return list;
     }

@@ -9,6 +9,9 @@ import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import org.springframework.stereotype.Repository;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -16,7 +19,16 @@ public class UserRepository {
 
     Firestore db = FirestoreClient.getFirestore();
 
-    public String create(User newUser) throws ExecutionException, InterruptedException {
+    public String create(User newUser) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("MD5");
+        digest.update(newUser.getPassword().getBytes());
+        byte[] bytes = digest.digest();
+        StringBuilder s = new StringBuilder();
+        for(int i=0; i< bytes.length ;i++)
+        {
+            s.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        newUser.setPassword(s.toString());
         ApiFuture<WriteResult> api = db.collection("Users").document(newUser.getUid()).set(newUser);
         return api.get().getUpdateTime().toString();
     }
@@ -34,7 +46,7 @@ public class UserRepository {
         }
     }
 
-    public String register2(User newUser, String otp) throws ExecutionException, InterruptedException {
+    public String register2(User newUser, String otp) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
         String sdt = newUser.getPhoneNumber();
         String sdtp = "+84" + sdt.substring(1, sdt.length());
         VerificationCheck verificationCheck = VerificationCheck.creator("VA86635201a4bbafb69394a1cf3c2e7b6b", otp)
