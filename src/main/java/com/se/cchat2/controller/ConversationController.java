@@ -57,13 +57,8 @@ public class ConversationController {
         return cv;
     }
 
-    @PostMapping("/newDefConv")
-    public String createDef() throws ExecutionException, InterruptedException {
-        return conversationRepository.createDefault();
-    }
-
-    @GetMapping("/checkExistedConv/{fuid}/{uuid}")
-    public String checkExistedConv(@PathVariable String fuid, @PathVariable String uuid) throws ExecutionException, InterruptedException {
+    @GetMapping("/startDirectChat/{fuid}/{uuid}")
+    public String startDirectChat(@PathVariable String fuid, @PathVariable String uuid) throws ExecutionException, InterruptedException {
         List<Conversation> drl = conversationRepository.getAllDirects();
         List<Member> em = new ArrayList<>();
         for(Conversation c : drl){
@@ -75,7 +70,10 @@ public class ConversationController {
             }
         }
         if(em.isEmpty()){
-            return "Not existed";
+            String defcid = conversationRepository.createDefault();
+            memberRepository.create(defcid, uuid, "D_Member");
+            memberRepository.create(defcid, fuid, "D_Member");
+            return defcid;
         }
         else {
             return em.get(0).getCid();

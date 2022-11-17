@@ -2,11 +2,10 @@ package com.se.cchat2.controller;
 
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.UserRepository;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -16,38 +15,36 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    final String password = "cchat128";
+
     @PostMapping("/register")
     public String createAccount1(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
         return userRepository.register1(newAcc);
     }
+
     @PostMapping("/register/{otp}")
-    public String createAccount2(@PathVariable String otp ,@RequestBody User newAcc) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
+    public String createAccount2(@PathVariable String otp ,@RequestBody User newAcc) throws ExecutionException, InterruptedException {
         String uuid = UUID.randomUUID().toString();
         newAcc.setUid(uuid);
         return userRepository.register2(newAcc, otp);
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User newAcc) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
+    public String login(@RequestBody User newAcc) throws ExecutionException, InterruptedException {
         User u = userRepository.findBySdt(newAcc.getPhoneNumber());
         if(u.getUid() == null){
             return "Sai thong tin dang nhap";
         }
         else {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(newAcc.getPassword().getBytes());
-            byte[] bytes = digest.digest();
-            StringBuilder s = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                s.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            newAcc.setPassword(s.toString());
+            StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+            encryptor.setPassword(password);
+            String decrypted = encryptor.decrypt(u.getPassword());
+            u.setPassword(decrypted);
             if(u.getPassword().equals(newAcc.getPassword())){
                 return u.getUid();
             }
             else {
-                return "Sai thong tin dang nhap - "+newAcc.getPassword() + " - "+u.getPassword();
+                return "Sai thong tin dang nhap";
             }
         }
     }
@@ -58,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/updateUser/{uid}")
-    public User createAccount(@PathVariable("uid") String uid, @RequestBody User newAcc) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
+    public User createAccount(@PathVariable("uid") String uid, @RequestBody User newAcc) throws ExecutionException, InterruptedException {
         newAcc.setUid(uid);
         userRepository.create(newAcc);
         return newAcc;

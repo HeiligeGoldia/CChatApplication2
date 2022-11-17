@@ -111,4 +111,29 @@ public class FriendController {
         }
     }
 
+    @GetMapping("/findAllBySdt/{sdt}/{uid}")
+    public User findAllBySdt(@PathVariable String sdt, @PathVariable String uid) throws ExecutionException, InterruptedException {
+        User u = userRepository.findBySdt(sdt);
+        if(u.getUid() != null){
+            if(!u.getUid().equals(uid)){
+                return u;
+            }
+            else {
+                User nu = new User();
+                nu.setUid("nf");
+                return nu;
+            }
+        }
+        else {
+            User nu = new User();
+            nu.setUid("nf");
+            return nu;
+        }
+    }
+
+    @GetMapping("/checkFStt/{uuid}/{fuid}")
+    public String checkFStt(@PathVariable String uuid, @PathVariable String fuid) throws ExecutionException, InterruptedException {
+        return friendRepository.checkFStt(uuid,fuid);
+    }
+
 }

@@ -35,15 +35,15 @@ public class FriendRepository {
         }
     }
 
-    public Friend getById(String fid) throws ExecutionException, InterruptedException {
-        DocumentReference ref = db.collection("Friend").document(fid);
-        ApiFuture<DocumentSnapshot> api = ref.get();
-        DocumentSnapshot doc = api.get();
-        if(doc.exists()){
-            return doc.toObject(Friend.class);
-        }
-        return new Friend();
-    }
+//    public Friend getById(String fid) throws ExecutionException, InterruptedException {
+//        DocumentReference ref = db.collection("Friend").document(fid);
+//        ApiFuture<DocumentSnapshot> api = ref.get();
+//        DocumentSnapshot doc = api.get();
+//        if(doc.exists()){
+//            return doc.toObject(Friend.class);
+//        }
+//        return new Friend();
+//    }
 
     public String create(Friend newFriend) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> api = db.collection("Friend").document(newFriend.getFid()).set(newFriend);
@@ -148,6 +148,39 @@ public class FriendRepository {
         else{
             return false;
         }
+    }
+
+    public String checkFStt(String uuid, String fuid) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Friend");
+
+        Query query1 = ref.whereEqualTo("uid1", uuid).whereEqualTo("uid2", fuid);
+        ApiFuture<QuerySnapshot> querySnapshot1 = query1.get();
+
+        for (DocumentSnapshot d1 : querySnapshot1.get().getDocuments()) {
+            Friend fd1 = d1.toObject(Friend.class);
+            if(fd1.getStatus().equals("Pending")){
+                return "Cancel request";
+            }
+            else if(fd1.getStatus().equals("Friend")){
+                return "Friend";
+            }
+        }
+
+        Query query2 = ref.whereEqualTo("uid1", fuid).whereEqualTo("uid2", uuid);
+        ApiFuture<QuerySnapshot> querySnapshot2 = query2.get();
+
+        for (DocumentSnapshot d2 : querySnapshot2.get().getDocuments()) {
+            Friend fd2 = d2.toObject(Friend.class);
+            if(fd2.getStatus().equals("Pending")){
+                return "Accept request";
+            }
+            else if(fd2.getStatus().equals("Friend")){
+                return "Friend";
+            }
+        }
+
+        return "Stranger";
+
     }
 
 }
