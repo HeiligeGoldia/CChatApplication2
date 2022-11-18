@@ -172,7 +172,7 @@ public class FriendRepository {
         for (DocumentSnapshot d2 : querySnapshot2.get().getDocuments()) {
             Friend fd2 = d2.toObject(Friend.class);
             if(fd2.getStatus().equals("Pending")){
-                return "Accept request";
+                return "Response";
             }
             else if(fd2.getStatus().equals("Friend")){
                 return "Friend";
