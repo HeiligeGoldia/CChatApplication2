@@ -56,15 +56,18 @@ public class UserController {
 
     @PutMapping("/updateUser/{uid}")
     public User updateUser(@PathVariable("uid") String uid, @RequestBody User newAcc) throws ExecutionException, InterruptedException {
+        User u = userRepository.findByUid(uid);
         newAcc.setUid(uid);
+        newAcc.setPassword(u.getPassword());
         userRepository.updateInfo(newAcc);
         return newAcc;
     }
 
     @PutMapping("/updatePassword/{uid}")
     public User updatePassword(@PathVariable("uid") String uid, @RequestBody User newAcc) throws ExecutionException, InterruptedException {
-        newAcc.setUid(uid);
-        userRepository.create(newAcc);
+        User u = userRepository.findByUid(uid);
+        u.setPassword(newAcc.getPassword());
+        userRepository.create(u);
         return newAcc;
     }
 
