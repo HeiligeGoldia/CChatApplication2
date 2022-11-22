@@ -28,6 +28,11 @@ public class UserRepository {
         return api.get().getUpdateTime().toString();
     }
 
+    public String updateInfo(User newUser) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> api = db.collection("Users").document(newUser.getUid()).set(newUser);
+        return api.get().getUpdateTime().toString();
+    }
+
     public String register1(User newUser) throws ExecutionException, InterruptedException {
         String sdt = newUser.getPhoneNumber();
         String sdtp = "+84" + sdt.substring(1, sdt.length());
