@@ -68,7 +68,7 @@ public class UserController {
         User u = userRepository.findByUid(uid);
         u.setPassword(newAcc.getPassword());
         userRepository.create(u);
-        return newAcc;
+        return u;
     }
 
     @DeleteMapping("/deleteUser/{uid}")
