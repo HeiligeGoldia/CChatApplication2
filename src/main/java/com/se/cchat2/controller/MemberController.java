@@ -28,9 +28,25 @@ public class MemberController {
         return "Done";
     }
 
-     @GetMapping("/getUserRole/{uid}/{cid}")
+    @GetMapping("/getUserRole/{uid}/{cid}")
     public String getUserRole(@PathVariable String uid, @PathVariable String cid) throws ExecutionException, InterruptedException {
         return memberRepository.getByCidUid(cid,uid).getRole();
-     }
+    }
+
+    @DeleteMapping("/leaveGroup/{uid}/{cid}")
+    public String leaveGroup(@PathVariable String uid, @PathVariable String cid) throws ExecutionException, InterruptedException {
+        Member m = memberRepository.getByCidUid(cid, uid);
+        if(m.getRole().equals("Owner")){
+            return "Owner is not allowed to leave group";
+        }
+        else {
+            return memberRepository.deleteMember(m);
+        }
+    }
+
+    @PutMapping("/nRole/{cid}/{uid}/{muid}")
+    public String nRole(@PathVariable String cid, @PathVariable String uid, @PathVariable String muid) throws ExecutionException, InterruptedException {
+        return memberRepository.nRole(cid, uid, muid);
+    }
 
 }

@@ -91,4 +91,9 @@ public class ConversationRepository {
         return cons;
     }
 
+    public String deleteConv(String cid) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = db.collection("Conversations").document(cid).delete();
+        return writeResult.get().getUpdateTime().toString();
+    }
+
 }

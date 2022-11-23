@@ -96,4 +96,13 @@ public class ConversationController {
         return lu;
     }
 
+    @DeleteMapping("/deleteGroup/{cid}")
+    public String deleteGroup(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
+        List<Member> listMem = memberRepository.loadConvMem(cid);
+        for (Member m : listMem){
+            memberRepository.deleteMember(m);
+        }
+        return conversationRepository.deleteConv(cid);
+    }
+
 }

@@ -17,6 +17,8 @@ public class Message {
 
     private String content;
 
+    private String sentTime;
+
     public String getMsid() {
         return msid;
     }
@@ -47,5 +49,13 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getSentTime() {
+        return sentTime;
+    }
+
+    public void setSentTime(String sentTime) {
+        this.sentTime = sentTime;
     }
 }

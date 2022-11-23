@@ -16,17 +16,17 @@ public class MemberRepository {
 
     Firestore db = FirestoreClient.getFirestore();
 
-    public Member getById(String mid) throws ExecutionException, InterruptedException {
-        Member mem;
-        DocumentReference ref = db.collection("Member").document(mid);
-        ApiFuture<DocumentSnapshot> api = ref.get();
-        DocumentSnapshot doc = api.get();
-        if(doc.exists()){
-            mem = doc.toObject(Member.class);
-            return mem;
-        }
-        return new Member();
-    }
+//    public Member getById(String mid) throws ExecutionException, InterruptedException {
+//        Member mem;
+//        DocumentReference ref = db.collection("Member").document(mid);
+//        ApiFuture<DocumentSnapshot> api = ref.get();
+//        DocumentSnapshot doc = api.get();
+//        if(doc.exists()){
+//            mem = doc.toObject(Member.class);
+//            return mem;
+//        }
+//        return new Member();
+//    }
 
     public List<Member> loadUserMem(String uid) throws ExecutionException, InterruptedException {
         List<Member> list = new ArrayList<>();
@@ -85,5 +85,23 @@ public class MemberRepository {
         }
         return new Member();
     }
+
+    public String deleteMember(Member m) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = db.collection("Members").document(m.getMid()).delete();
+        return writeResult.get().getUpdateTime().toString();
+    }
+
+    public String nRole(String cid, String uid, String muid) throws ExecutionException, InterruptedException {
+        Member m1 = getByCidUid(cid, uid);
+        m1.setRole("Member");
+        ApiFuture<WriteResult> api1 = db.collection("Members").document(m1.getMid()).set(m1);
+        Member m2 = getByCidUid(cid, muid);
+        m2.setRole("Owner");
+        ApiFuture<WriteResult> api2 = db.collection("Members").document(m2.getMid()).set(m2);
+        api1.get(); api2.get();
+        return "nRole done";
+    }
+
+
 
 }

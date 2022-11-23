@@ -18,10 +18,12 @@ public class MessageRepository {
     final String password = "cchat128";
 
     public String sendMessage(Message newMess) throws ExecutionException, InterruptedException {
-        StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-        encryptor.setPassword(password);
-        String encrypted= encryptor.encrypt(newMess.getContent());
-        newMess.setContent(encrypted);
+        if(newMess.getContent().length()<2000){
+            StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+            encryptor.setPassword(password);
+            String encrypted= encryptor.encrypt(newMess.getContent());
+            newMess.setContent(encrypted);
+        }
 
         ApiFuture<WriteResult> api = db.collection("Messages").document(newMess.getMsid()).set(newMess);
 
@@ -73,11 +75,18 @@ public class MessageRepository {
         Collections.sort(docId);
         for(Integer i : docId){
             Message mes = ref.document(String.valueOf(i)).get().get().toObject(Message.class);
-            String decrypted = encryptor.decrypt(mes.getContent());
-            mes.setContent(decrypted);
+            if(mes.getContent().length()<2000){
+                String decrypted = encryptor.decrypt(mes.getContent());
+                mes.setContent(decrypted);
+            }
             list.add(mes);
         }
         return list;
+    }
+
+    public String deleteMessage(String msid) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> writeResult = db.collection("Messages").document(msid).delete();
+        return writeResult.get().getUpdateTime().toString();
     }
 
 }
