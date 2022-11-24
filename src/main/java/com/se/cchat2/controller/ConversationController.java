@@ -3,10 +3,7 @@ package com.se.cchat2.controller;
 import com.se.cchat2.entity.Conversation;
 import com.se.cchat2.entity.Member;
 import com.se.cchat2.entity.User;
-import com.se.cchat2.repository.ConversationRepository;
-import com.se.cchat2.repository.FriendRepository;
-import com.se.cchat2.repository.MemberRepository;
-import com.se.cchat2.repository.UserRepository;
+import com.se.cchat2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +19,9 @@ public class ConversationController {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -42,7 +42,29 @@ public class ConversationController {
 
     @GetMapping("/loadConvMem/{cid}")
     public List<User> loadConvMem(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
-        List<Member> listMem = memberRepository.loadConvMem(cid);
+        List<Member> listMem = memberRepository.loadConvRoleOwner(cid);
+        List<Member> mems = memberRepository.loadConvRoleMember(cid);
+        listMem.addAll(mems);
+        List<User> listUser = new ArrayList<>();
+        for(Member m : listMem){
+            listUser.add(userRepository.findByUid(m.getUid()));
+        }
+        return listUser;
+    }
+
+    @GetMapping("/loadConvRoleMem/{cid}")
+    public List<User> loadConvRoleMem(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
+        List<Member> listMem = memberRepository.loadConvRoleMember(cid);
+        List<User> listUser = new ArrayList<>();
+        for(Member m : listMem){
+            listUser.add(userRepository.findByUid(m.getUid()));
+        }
+        return listUser;
+    }
+
+    @GetMapping("/loadConvRoleOwner/{cid}")
+    public List<User> loadConvRoleOwner(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
+        List<Member> listMem = memberRepository.loadConvRoleOwner(cid);
         List<User> listUser = new ArrayList<>();
         for(Member m : listMem){
             listUser.add(userRepository.findByUid(m.getUid()));
@@ -102,6 +124,7 @@ public class ConversationController {
         for (Member m : listMem){
             memberRepository.deleteMember(m);
         }
+
         return conversationRepository.deleteConv(cid);
     }
 

@@ -50,6 +50,28 @@ public class MemberRepository {
         return list;
     }
 
+    public List<Member> loadConvRoleMember(String cid) throws ExecutionException, InterruptedException {
+        List<Member> list = new ArrayList<>();
+        CollectionReference ref = db.collection("Members");
+        Query query = ref.whereEqualTo("cid", cid).whereEqualTo("role", "Member");
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        for (DocumentSnapshot d : querySnapshot.get().getDocuments()) {
+            list.add(d.toObject(Member.class));
+        }
+        return list;
+    }
+
+    public List<Member> loadConvRoleOwner(String cid) throws ExecutionException, InterruptedException {
+        List<Member> list = new ArrayList<>();
+        CollectionReference ref = db.collection("Members");
+        Query query = ref.whereEqualTo("cid", cid).whereEqualTo("role", "Owner");
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        for (DocumentSnapshot d : querySnapshot.get().getDocuments()) {
+            list.add(d.toObject(Member.class));
+        }
+        return list;
+    }
+
     public String getLastMemId() throws ExecutionException, InterruptedException {
         CollectionReference ref = db.collection("Members");
         ApiFuture<QuerySnapshot> api = ref.get();
