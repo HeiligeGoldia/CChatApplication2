@@ -105,4 +105,11 @@ public class ConversationController {
         return conversationRepository.deleteConv(cid);
     }
 
+    @PutMapping("/updateConvName/{cid}/{newName}")
+    public String updateConvName(@PathVariable("cid") String cid, @PathVariable("newName") String newName) throws ExecutionException, InterruptedException {
+        Conversation c = conversationRepository.getById(cid);
+        c.setName(newName);
+        return conversationRepository.updateConv(c);
+    }
+
 }

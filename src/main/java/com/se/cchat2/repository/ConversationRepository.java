@@ -96,4 +96,9 @@ public class ConversationRepository {
         return writeResult.get().getUpdateTime().toString();
     }
 
+    public String updateConv(Conversation conversation) throws ExecutionException, InterruptedException {
+        ApiFuture<WriteResult> api = db.collection("Conversations").document(conversation.getCid()).set(conversation);
+        return api.get().getUpdateTime().toString();
+    }
+
 }
