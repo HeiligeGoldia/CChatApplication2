@@ -1,5 +1,7 @@
 package com.se.cchat2.controller;
 
+import com.se.cchat2.entity.Member;
+import com.se.cchat2.repository.MemberRepository;
 import com.se.cchat2.repository.MessageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,16 @@ public class MessageController {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @PostMapping("/send")
     public String send(@RequestBody Message newMessage) throws ExecutionException, InterruptedException {
+        Member m = memberRepository.getByCidUid(newMessage.getCid(), newMessage.getUid());
+        if(m.getMid() == null){
+            return "Can not send message";
+        }
+
         String lastId = messageRepository.getLastMessId();
         int newId = Integer.parseInt(lastId) + 1;
         newMessage.setMsid(String.valueOf(newId));
