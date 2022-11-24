@@ -102,4 +102,17 @@ public class MessageRepository {
         return docId;
     }
 
+    public List<Message> getMessageId(String cid, String uid) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Messages");
+        Query query = ref.whereEqualTo("cid", cid).whereEqualTo("uid", uid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        List<QueryDocumentSnapshot> docs = querySnapshot.get().getDocuments();
+        List<Message> docId = new ArrayList<>();
+
+        for(QueryDocumentSnapshot ds : docs){
+            docId.add(ds.toObject(Message.class));
+        }
+        return docId;
+    }
+
 }

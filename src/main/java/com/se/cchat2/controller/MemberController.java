@@ -1,8 +1,10 @@
 package com.se.cchat2.controller;
 
 import com.se.cchat2.entity.Member;
+import com.se.cchat2.entity.Message;
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.MemberRepository;
+import com.se.cchat2.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,9 @@ public class MemberController {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
 //    @PostMapping("/newMem")
 //    public String create(@RequestBody Member newMem) throws ExecutionException, InterruptedException {
@@ -40,6 +45,10 @@ public class MemberController {
             return "Owner is not allowed to leave group";
         }
         else {
+            List<Message> list = messageRepository.getMessageId(cid, uid);
+            for (Message idn : list){
+                messageRepository.deleteMessage(idn.getMsid());
+            }
             return memberRepository.deleteMember(m);
         }
     }
