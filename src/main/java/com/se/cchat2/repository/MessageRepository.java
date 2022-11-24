@@ -89,4 +89,17 @@ public class MessageRepository {
         return writeResult.get().getUpdateTime().toString();
     }
 
+    public List<Message> getMessageIds(String cid) throws ExecutionException, InterruptedException {
+        CollectionReference ref = db.collection("Messages");
+        Query query = ref.whereEqualTo("cid", cid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        List<QueryDocumentSnapshot> docs = querySnapshot.get().getDocuments();
+        List<Message> docId = new ArrayList<>();
+
+        for(QueryDocumentSnapshot ds : docs){
+            docId.add(ds.toObject(Message.class));
+        }
+        return docId;
+    }
+
 }

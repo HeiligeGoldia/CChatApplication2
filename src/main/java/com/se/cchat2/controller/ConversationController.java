@@ -2,6 +2,7 @@ package com.se.cchat2.controller;
 
 import com.se.cchat2.entity.Conversation;
 import com.se.cchat2.entity.Member;
+import com.se.cchat2.entity.Message;
 import com.se.cchat2.entity.User;
 import com.se.cchat2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,10 @@ public class ConversationController {
         for (Member m : listMem){
             memberRepository.deleteMember(m);
         }
-
+        List<Message> msids = messageRepository.getMessageIds(cid);
+        for (Message idn : msids){
+            messageRepository.deleteMessage(idn.getMsid());
+        }
         return conversationRepository.deleteConv(cid);
     }
 
