@@ -43,9 +43,7 @@ public class ConversationController {
 
     @GetMapping("/loadConvMem/{cid}")
     public List<User> loadConvMem(@PathVariable("cid") String cid) throws ExecutionException, InterruptedException {
-        List<Member> listMem = memberRepository.loadConvRoleOwner(cid);
-        List<Member> mems = memberRepository.loadConvRoleMember(cid);
-        listMem.addAll(mems);
+        List<Member> listMem = memberRepository.loadConvMem(cid);
         List<User> listUser = new ArrayList<>();
         for(Member m : listMem){
             listUser.add(userRepository.findByUid(m.getUid()));
